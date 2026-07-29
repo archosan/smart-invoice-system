@@ -1,0 +1,35 @@
+{
+  "file" : "contract-03.pdf",
+  "scenario" : "Vade farkı: sözleşme 30 gün, fatura 14 gün",
+  "supplierName" : "Karadeniz Gıda San. ve Tic. Ltd. Şti.",
+  "supplierVkn" : "6619027384",
+  "validFrom" : "2026-03-01",
+  "validTo" : "2027-02-28",
+  "paymentTermDays" : 30,
+  "prices" : [ {
+    "description" : "Fındık içi",
+    "unitPrice" : "410.00",
+    "unit" : "kg",
+    "clauseNo" : "4"
+  }, {
+    "description" : "Ambalaj kolisi",
+    "unitPrice" : "14.75",
+    "unit" : "adet",
+    "clauseNo" : "4"
+  } ],
+  "layout" : {
+    "subClauses" : false,
+    "headerFooter" : false,
+    "hyphenate" : false,
+    "longClause" : false,
+    "imageOnly" : false
+  },
+  "expectation" : {
+    "ingest" : "READY",
+    "invoiceFile" : "invoice-04.pdf",
+    "result" : "NON_COMPLIANT",
+    "finding" : "Vade: fatura 14 gün ≠ sözleşme 30 gün (Madde 5)",
+    "paymentClauseNo" : "5"
+  },
+  "note" : "Fiyatlar tutar; yalnız vade farklı. Vade = fatura vadesi − fatura tarihi."
+}

@@ -1,0 +1,50 @@
+{
+  "file" : "contract-02.pdf",
+  "scenario" : "Bir kalemde fiyat aşımı, alt maddeli düzen",
+  "supplierName" : "Ege Endüstriyel Malzeme A.Ş.",
+  "supplierVkn" : "7302918465",
+  "validFrom" : "2026-01-01",
+  "validTo" : "2026-12-31",
+  "paymentTermDays" : 30,
+  "prices" : [ {
+    "description" : "Rulman 6204 ZZ",
+    "unitPrice" : "80.00",
+    "unit" : "adet",
+    "clauseNo" : "4.1"
+  }, {
+    "description" : "Hidrolik yağ 20 L",
+    "unitPrice" : "1840.00",
+    "unit" : "bidon",
+    "clauseNo" : "4.2"
+  }, {
+    "description" : "Bakım el kitabı",
+    "unitPrice" : "350.00",
+    "unit" : "adet",
+    "clauseNo" : "4.3"
+  }, {
+    "description" : "Ekmek",
+    "unitPrice" : "12.50",
+    "unit" : "adet",
+    "clauseNo" : "4.4"
+  }, {
+    "description" : "İş eldiveni",
+    "unitPrice" : "38.90",
+    "unit" : "çift",
+    "clauseNo" : "4.5"
+  } ],
+  "layout" : {
+    "subClauses" : true,
+    "headerFooter" : false,
+    "hyphenate" : false,
+    "longClause" : false,
+    "imageOnly" : false
+  },
+  "expectation" : {
+    "ingest" : "READY",
+    "invoiceFile" : "invoice-02.pdf",
+    "result" : "NON_COMPLIANT",
+    "finding" : "Rulman 6204 ZZ: fatura 86,50 TL > sözleşme 80,00 TL (Madde 4.1)",
+    "paymentClauseNo" : "5.1"
+  },
+  "note" : "Alt madde kalıbı ^\\d+(\\.\\d+)*[.)]\\s; her kalem ayrı alt madde, sorgu kalem başına."
+}
