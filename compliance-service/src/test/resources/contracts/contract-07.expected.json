@@ -1,0 +1,55 @@
+{
+  "file" : "contract-07.pdf",
+  "scenario" : "Çok sayfa: üst/alt bilgi, satır sonu tireleri, uzun madde",
+  "supplierName" : "İç Anadolu Medikal Ltd. Şti.",
+  "supplierVkn" : "9038174652",
+  "validFrom" : "2026-06-01",
+  "validTo" : "2027-05-31",
+  "paymentTermDays" : 30,
+  "prices" : [ {
+    "description" : "Steril gazlı bez",
+    "unitPrice" : "175.00",
+    "unit" : "paket",
+    "clauseNo" : "4"
+  }, {
+    "description" : "Enjektör 5 ml",
+    "unitPrice" : "175.00",
+    "unit" : "kutu",
+    "clauseNo" : "4"
+  }, {
+    "description" : "Eldiven (nitril, M)",
+    "unitPrice" : "175.00",
+    "unit" : "kutu",
+    "clauseNo" : "4"
+  }, {
+    "description" : "Cerrahi maske",
+    "unitPrice" : "175.00",
+    "unit" : "kutu",
+    "clauseNo" : "4"
+  }, {
+    "description" : "Alkollü mendil",
+    "unitPrice" : "175.00",
+    "unit" : "paket",
+    "clauseNo" : "4"
+  }, {
+    "description" : "Serum seti",
+    "unitPrice" : "175.00",
+    "unit" : "adet",
+    "clauseNo" : "4"
+  } ],
+  "layout" : {
+    "subClauses" : false,
+    "headerFooter" : true,
+    "hyphenate" : true,
+    "longClause" : true,
+    "imageOnly" : false
+  },
+  "expectation" : {
+    "ingest" : "READY",
+    "invoiceFile" : "invoice-07.pdf",
+    "result" : "COMPLIANT",
+    "finding" : null,
+    "paymentClauseNo" : "5"
+  },
+  "note" : "Normalizasyon (tekrar eden üst/alt bilgi, tireli satır sonu) ve ~500 token'ı aşan maddenin paragraftan bölünmesi; faturadaki 48 kalemin fiyatı 175,00 TL tavanın altında."
+}
