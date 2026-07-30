@@ -1,0 +1,35 @@
+{
+  "file" : "contract-05.pdf",
+  "scenario" : "Çakışan aralık (2/2): Temmuz'dan başlayan yenileme",
+  "supplierName" : "Doğu Yazılım Hizmetleri A.Ş.",
+  "supplierVkn" : "5172039486",
+  "validFrom" : "2026-07-01",
+  "validTo" : "2027-06-30",
+  "paymentTermDays" : 30,
+  "prices" : [ {
+    "description" : "Yazılım bakım hizmeti",
+    "unitPrice" : "12500.00",
+    "unit" : "ay",
+    "clauseNo" : "4"
+  }, {
+    "description" : "Bulut sunucu kirası",
+    "unitPrice" : "1750.00",
+    "unit" : "ay",
+    "clauseNo" : "4"
+  } ],
+  "layout" : {
+    "subClauses" : false,
+    "headerFooter" : false,
+    "hyphenate" : false,
+    "longClause" : false,
+    "imageOnly" : false
+  },
+  "expectation" : {
+    "ingest" : "READY",
+    "invoiceFile" : "invoice-06.pdf",
+    "result" : "CONTRACT_CONFLICT",
+    "finding" : "Fatura tarihinde iki geçerli sözleşme (contract-04, contract-05)",
+    "paymentClauseNo" : "5"
+  },
+  "note" : "Yükleme API'si çakışmayı kabul eder ama uyarı döner (§4.3)."
+}

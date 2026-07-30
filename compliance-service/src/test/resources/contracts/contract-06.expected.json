@@ -1,0 +1,35 @@
+{
+  "file" : "contract-06.pdf",
+  "scenario" : "Süresi dolmuş sözleşme",
+  "supplierName" : "Trakya Tarım Ürünleri Kooperatifi",
+  "supplierVkn" : "1429837560",
+  "validFrom" : "2025-01-01",
+  "validTo" : "2025-12-31",
+  "paymentTermDays" : 42,
+  "prices" : [ {
+    "description" : "Buğday tohumu",
+    "unitPrice" : "18.40",
+    "unit" : "kg",
+    "clauseNo" : "4"
+  }, {
+    "description" : "Gübre",
+    "unitPrice" : "640.00",
+    "unit" : "çuval",
+    "clauseNo" : "4"
+  } ],
+  "layout" : {
+    "subClauses" : false,
+    "headerFooter" : false,
+    "hyphenate" : false,
+    "longClause" : false,
+    "imageOnly" : false
+  },
+  "expectation" : {
+    "ingest" : "READY",
+    "invoiceFile" : "invoice-08.pdf",
+    "result" : "NO_CONTRACT",
+    "finding" : "Fatura tarihinde (18.09.2026) geçerli sözleşme yok",
+    "paymentClauseNo" : "5"
+  },
+  "note" : "Değerler tutsa da sözleşme seçilmez; süre kontrolü SQL'de biter."
+}
