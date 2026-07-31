@@ -1,0 +1,35 @@
+{
+  "file" : "uyumlu-invoice-04.pdf",
+  "scenario" : "Faturayla uyumlu: invoice-04.pdf",
+  "supplierName" : "Karadeniz Gıda San. ve Tic. Ltd. Şti.",
+  "supplierVkn" : "6619027384",
+  "validFrom" : "2026-01-01",
+  "validTo" : "2026-12-31",
+  "paymentTermDays" : 14,
+  "prices" : [ {
+    "description" : "Fındık içi (kg)",
+    "unitPrice" : "410.00",
+    "unit" : "adet",
+    "clauseNo" : "4"
+  }, {
+    "description" : "Ambalaj kolisi",
+    "unitPrice" : "14.75",
+    "unit" : "adet",
+    "clauseNo" : "4"
+  } ],
+  "layout" : {
+    "subClauses" : false,
+    "headerFooter" : false,
+    "hyphenate" : false,
+    "longClause" : false,
+    "imageOnly" : false
+  },
+  "expectation" : {
+    "ingest" : "READY",
+    "invoiceFile" : "invoice-04.pdf",
+    "result" : "COMPLIANT",
+    "finding" : null,
+    "paymentClauseNo" : "5"
+  },
+  "note" : "B-46 sistem testleri"
+}

@@ -1,0 +1,35 @@
+{
+  "file" : "uyumlu-invoice-03.pdf",
+  "scenario" : "Faturayla uyumlu: invoice-03.pdf",
+  "supplierName" : "Marmara İnşaat Taahhüt A.Ş.",
+  "supplierVkn" : "2950183746",
+  "validFrom" : "2026-01-01",
+  "validTo" : "2026-12-31",
+  "paymentTermDays" : 60,
+  "prices" : [ {
+    "description" : "Çelik konstrüksiyon montajı",
+    "unitPrice" : "985000.00",
+    "unit" : "adet",
+    "clauseNo" : "4"
+  }, {
+    "description" : "Beton C30 (m³)",
+    "unitPrice" : "2450.75",
+    "unit" : "adet",
+    "clauseNo" : "4"
+  } ],
+  "layout" : {
+    "subClauses" : false,
+    "headerFooter" : false,
+    "hyphenate" : false,
+    "longClause" : false,
+    "imageOnly" : false
+  },
+  "expectation" : {
+    "ingest" : "READY",
+    "invoiceFile" : "invoice-03.pdf",
+    "result" : "COMPLIANT",
+    "finding" : null,
+    "paymentClauseNo" : "5"
+  },
+  "note" : "B-46 sistem testleri"
+}

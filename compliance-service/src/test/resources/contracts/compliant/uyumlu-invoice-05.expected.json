@@ -1,0 +1,40 @@
+{
+  "file" : "uyumlu-invoice-05.pdf",
+  "scenario" : "Faturayla uyumlu: invoice-05.pdf",
+  "supplierName" : "Güneydoğu Çiçekçilik — Şükrü Öztürk",
+  "supplierVkn" : "3847561920",
+  "validFrom" : "2026-01-01",
+  "validTo" : "2026-12-31",
+  "paymentTermDays" : 30,
+  "prices" : [ {
+    "description" : "Işıklı süs bitkisi (saksı, büyük boy)",
+    "unitPrice" : "540.00",
+    "unit" : "adet",
+    "clauseNo" : "4"
+  }, {
+    "description" : "Gül buketi — ağır kokulu, İğdır üretimi",
+    "unitPrice" : "275.50",
+    "unit" : "adet",
+    "clauseNo" : "4"
+  }, {
+    "description" : "Çiçek gübresi (ölçü kaşığıyla)",
+    "unitPrice" : "189.90",
+    "unit" : "adet",
+    "clauseNo" : "4"
+  } ],
+  "layout" : {
+    "subClauses" : false,
+    "headerFooter" : false,
+    "hyphenate" : false,
+    "longClause" : false,
+    "imageOnly" : false
+  },
+  "expectation" : {
+    "ingest" : "READY",
+    "invoiceFile" : "invoice-05.pdf",
+    "result" : "COMPLIANT",
+    "finding" : null,
+    "paymentClauseNo" : "5"
+  },
+  "note" : "B-46 sistem testleri"
+}
