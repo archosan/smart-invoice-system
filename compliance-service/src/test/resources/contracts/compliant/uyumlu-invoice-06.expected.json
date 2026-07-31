@@ -1,0 +1,35 @@
+{
+  "file" : "uyumlu-invoice-06.pdf",
+  "scenario" : "Faturayla uyumlu: invoice-06.pdf",
+  "supplierName" : "Doğu Yazılım Hizmetleri A.Ş.",
+  "supplierVkn" : "5172039486",
+  "validFrom" : "2026-01-01",
+  "validTo" : "2026-12-31",
+  "paymentTermDays" : 30,
+  "prices" : [ {
+    "description" : "Yazılım bakım hizmeti (Eylül 2026)",
+    "unitPrice" : "12500.00",
+    "unit" : "adet",
+    "clauseNo" : "4"
+  }, {
+    "description" : "Bulut sunucu kirası (aylık)",
+    "unitPrice" : "1750.00",
+    "unit" : "adet",
+    "clauseNo" : "4"
+  } ],
+  "layout" : {
+    "subClauses" : false,
+    "headerFooter" : false,
+    "hyphenate" : false,
+    "longClause" : false,
+    "imageOnly" : false
+  },
+  "expectation" : {
+    "ingest" : "READY",
+    "invoiceFile" : "invoice-06.pdf",
+    "result" : "COMPLIANT",
+    "finding" : null,
+    "paymentClauseNo" : "5"
+  },
+  "note" : "B-46 sistem testleri"
+}

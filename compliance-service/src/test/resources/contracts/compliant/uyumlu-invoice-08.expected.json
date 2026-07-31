@@ -1,0 +1,35 @@
+{
+  "file" : "uyumlu-invoice-08.pdf",
+  "scenario" : "Faturayla uyumlu: invoice-08.pdf",
+  "supplierName" : "Trakya Tarım Ürünleri Kooperatifi",
+  "supplierVkn" : "1429837560",
+  "validFrom" : "2026-01-01",
+  "validTo" : "2026-12-31",
+  "paymentTermDays" : 42,
+  "prices" : [ {
+    "description" : "Buğday tohumu (kg)",
+    "unitPrice" : "18.40",
+    "unit" : "adet",
+    "clauseNo" : "4"
+  }, {
+    "description" : "Gübre (50 kg çuval)",
+    "unitPrice" : "640.00",
+    "unit" : "adet",
+    "clauseNo" : "4"
+  } ],
+  "layout" : {
+    "subClauses" : false,
+    "headerFooter" : false,
+    "hyphenate" : false,
+    "longClause" : false,
+    "imageOnly" : false
+  },
+  "expectation" : {
+    "ingest" : "READY",
+    "invoiceFile" : "invoice-08.pdf",
+    "result" : "COMPLIANT",
+    "finding" : null,
+    "paymentClauseNo" : "5"
+  },
+  "note" : "B-46 sistem testleri"
+}
