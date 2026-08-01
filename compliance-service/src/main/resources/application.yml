@@ -1,0 +1,83 @@
+spring:
+  application:
+    name: compliance-service
+  # Bağlantı ayarları (datasource, rabbitmq) compose ortamından gelir.
+  rabbitmq:
+    # Outbox relay bunlar olmadan başlamaz (B-05).
+    publisher-confirm-type: correlated
+    publisher-returns: true
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 21MB
+  mvc:
+    problemdetails:
+      enabled: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+  http:
+    clients:
+      # Embedding ve değer çıkarımı (B-45, B-46); bağlantı zaman aşımı kısa: Ollama'ya ulaşılamama hızlı anlaşılsın.
+      connect-timeout: 2s
+      read-timeout: ${invoice.compliance.llm.timeout}
+  ai:
+    # Spring AI'ın kendi yeniden denemesi kapalı (extraction ile aynı, B-19): deneme kuyruğun teslim limitindedir.
+    retry:
+      max-attempts: 0
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      init:
+        # Model host'ta önceden çekilir; servis açılışta indirmeye çalışmaz.
+        pull-model-strategy: never
+      embedding:
+        model: ${invoice.compliance.embedding.model}
+      chat:
+        model: ${invoice.compliance.llm.model}
+
+server:
+  tomcat:
+    # Sınırı aşan gövde okunup atılır ki istemci 413 alsın (document-service ile aynı, B-10).
+    max-swallow-size: 100MB
+
+invoice:
+  compliance:
+    storage-dir: /data/contracts
+    embedding:
+      model: ${OLLAMA_EMBEDDING_MODEL:bge-m3}
+    llm:
+      model: ${OLLAMA_CHAT_MODEL:qwen2.5:7b-instruct}
+      timeout: 120s
+      permits: 2
+      local-permits: 1
+      permit-wait: 10m
+      num-ctx: 4096
+      max-output-tokens: 512
+    retrieval:
+      top-k: 4
+    # API kullanıcıları (B-45, ADR-22): document-service'tekilerle aynı adlar ve aynı .env şifreleri.
+    security:
+      users:
+        expert:
+          password: ${API_EXPERT_PASSWORD:}
+          roles: [EXPERT]
+        approver:
+          password: ${API_APPROVER_PASSWORD:}
+          roles: [APPROVER]
+        admin:
+          password: ${API_ADMIN_PASSWORD:}
+          roles: [ADMIN]
+        expert-approver:
+          password: ${API_EXPERT_APPROVER_PASSWORD:}
+          roles: [EXPERT, APPROVER]
+
+# Metrikler (B-48, NFR-06): Prometheus biçimi; yetki ADMIN (ADR-22). Kuyruk derinliği broker'ın kendi uçlarında
+# (rabbitmq_prometheus), alarm kuralları infra/prometheus/alerts.yml.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
