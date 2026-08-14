@@ -1,3 +1,52 @@
 spring:
   application:
     name: document-service
+  # Bağlantı ayarları (datasource, rabbitmq) compose ortamından gelir.
+  rabbitmq:
+    # Outbox relay bunlar olmadan başlamaz (B-05).
+    publisher-confirm-type: correlated
+    publisher-returns: true
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 21MB
+  mvc:
+    problemdetails:
+      enabled: true
+
+server:
+  tomcat:
+    # Sınırı aşan gövde okunup atılır ki istemci 413 alsın; varsayılan (2 MB) aşılırsa Tomcat yanıt vermeden
+    # bağlantıyı keser. Bundan büyük isteklerde bağlantı yine kesilir.
+    max-swallow-size: 100MB
+
+invoice:
+  document:
+    storage-dir: /data/documents
+    # API kullanıcıları (B-43, NFR-10). Şifreler .env'den; boşsa servis açılmaz. expert-approver iki role de sahip:
+    # "onaycı kendi yüklediğini onaylayamaz" kuralı ancak böyle bir kullanıcıyla görülür.
+    security:
+      users:
+        expert:
+          password: ${API_EXPERT_PASSWORD:}
+          roles: [EXPERT]
+        approver:
+          password: ${API_APPROVER_PASSWORD:}
+          roles: [APPROVER]
+        admin:
+          password: ${API_ADMIN_PASSWORD:}
+          roles: [ADMIN]
+        expert-approver:
+          password: ${API_EXPERT_APPROVER_PASSWORD:}
+          roles: [EXPERT, APPROVER]
+
+# Metrikler (B-48, NFR-06): Prometheus biçimi; yetki ADMIN (ADR-22). Kuyruk derinliği broker'ın kendi uçlarında
+# (rabbitmq_prometheus), alarm kuralları infra/prometheus/alerts.yml.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
