@@ -1,3 +1,92 @@
 spring:
   application:
     name: extraction-service
+  # Bağlantı ayarları (datasource, rabbitmq) compose ortamından gelir.
+  rabbitmq:
+    # Outbox relay bunlar olmadan başlamaz (B-05).
+    publisher-confirm-type: correlated
+    publisher-returns: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+  http:
+    clients:
+      # Ollama çağrısının zaman aşımı (B-19); bağlantı zaman aşımı kısa: ulaşılamama hızlı anlaşılsın (A1).
+      connect-timeout: 2s
+      read-timeout: ${invoice.extraction.llm.timeout}
+  ai:
+    # Spring AI'ın kendi yeniden denemesi kapalı; denemeyi LlmExtraction yönetir. Değer ilk denemeye EK tekrar sayısıdır
+    # (Spring Framework 7 retry): varsayılan 10 ve 1 bile her denemeyi Ollama'ya iki kez gönderir, zaman aşımını
+    # bekleme süresiyle birlikte katlar (B-19'da ölçüldü). 0 = tek istek.
+    retry:
+      max-attempts: 0
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      init:
+        # Model host'ta önceden çekilir; servis açılışta indirmeye çalışmaz.
+        pull-model-strategy: never
+
+invoice:
+  extraction:
+    storage-dir: /data/documents
+    min-text-chars: 20
+    llm:
+      model: ${OLLAMA_CHAT_MODEL:qwen2.5:7b-instruct}
+      timeout: 120s
+      permits: 2
+      local-permits: 1
+      permit-wait: 10m
+      max-attempts: 3
+      availability-probe-interval: 30s
+      # Ollama bağlam penceresi; verilmezse Ollama makineye göre seçer (burada 4096) ve 48 kalemlik fatura taşar
+      # (B-29). Taşma algılanırsa çıktı güvenilmez sayılır.
+      num-ctx: 8192
+      # Çıktı üst sınırı (num_predict): tekrar döngüsüne giren model durur; sınırda kesilen yanıt güvenilmez sayılır.
+      # İstem + bu sınır num-ctx'e sığmalı (48 kalemlik fatura: ~2400 + ~2700).
+      max-output-tokens: 4096
+      # v1 açıklamadaki sayıları miktar sanıyordu; v2'nin konuma dayalı kuralı ters tepti (B-29). Eski sürümler
+      # karşılaştırma için seçilebilir.
+      prompt-version: v3
+    # Ham LLM çıktısı (B-47, FR-E6): süresi dolunca yalnız raw_output silinir, deneme satırı kalır.
+    retention:
+      raw-output: 90d
+      cron: "0 30 3 * * *"
+    # API kullanıcıları (B-47, ADR-22): document-service ile aynı adlar ve aynı .env şifreleri.
+    security:
+      users:
+        expert:
+          password: ${API_EXPERT_PASSWORD:}
+          roles: [EXPERT]
+        approver:
+          password: ${API_APPROVER_PASSWORD:}
+          roles: [APPROVER]
+        admin:
+          password: ${API_ADMIN_PASSWORD:}
+          roles: [ADMIN]
+        expert-approver:
+          password: ${API_EXPERT_APPROVER_PASSWORD:}
+          roles: [EXPERT, APPROVER]
+    validation:
+      # Toleranslar ve ağırlıklar ilk sürüm (B-20); 10 sentetik faturayla kalibre edilecek (B-29, A5).
+      per-line-tolerance: 0.01
+      minimum-tolerance: 0.02
+      total-tolerance: 0.02
+      weights:
+        required-fields-present: 0.50
+        vkn10-digits: 0.30
+        lines-sum-equals-subtotal: 0.40
+        subtotal-plus-vat-equals-total: 0.40
+        invoice-date-not-after-due-date: 0.15
+        amounts-parsed: 0.30
+        vat-matches-lines: 0.15
+
+# Metrikler (B-48, NFR-06): Prometheus biçimi; yetki ADMIN (ADR-22). Kuyruk derinliği broker'ın kendi uçlarında
+# (rabbitmq_prometheus), alarm kuralları infra/prometheus/alerts.yml.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
