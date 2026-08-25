@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Yeni fatura')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main>
+    <h1>Yeni fatura</h1>
+    <p id="form-errors" th:unless="${errors.isEmpty()}">Formda hatalar var.</p>
+    <form id="invoice-form" th:action="@{/invoices}" method="post" data-delayed>
+        <div class="row"><label for="supplierVkn">VKN</label>
+            <input id="supplierVkn" name="supplierVkn" type="text" maxlength="10" th:value="${form.supplierVkn()}">
+            <span class="field-error" data-field="supplierVkn" th:if="${errors.containsKey('supplierVkn')}"
+                  th:text="${errors.get('supplierVkn')}"></span></div>
+        <div class="row"><label for="supplierName">Tedarikçi adı</label>
+            <input id="supplierName" name="supplierName" type="text" th:value="${form.supplierName()}">
+            <span class="field-error" data-field="supplierName" th:if="${errors.containsKey('supplierName')}"
+                  th:text="${errors.get('supplierName')}"></span></div>
+        <div class="row"><label for="invoiceNo">Fatura no</label>
+            <input id="invoiceNo" name="invoiceNo" type="text" th:value="${form.invoiceNo()}">
+            <span class="field-error" data-field="invoiceNo" th:if="${errors.containsKey('invoiceNo')}"
+                  th:text="${errors.get('invoiceNo')}"></span></div>
+        <div class="row"><label for="invoiceDate">Fatura tarihi</label>
+            <input id="invoiceDate" name="invoiceDate" type="date" th:value="${form.invoiceDate()}">
+            <span class="field-error" data-field="invoiceDate" th:if="${errors.containsKey('invoiceDate')}"
+                  th:text="${errors.get('invoiceDate')}"></span></div>
+        <div class="row"><label for="dueDate">Vade tarihi</label>
+            <input id="dueDate" name="dueDate" type="date" th:value="${form.dueDate()}">
+            <span class="field-error" data-field="dueDate" th:if="${errors.containsKey('dueDate')}"
+                  th:text="${errors.get('dueDate')}"></span></div>
+        <div class="row"><label for="grandTotal">Genel toplam</label>
+            <input id="grandTotal" name="grandTotal" type="text" th:value="${form.grandTotal()}">
+            <span class="field-error" data-field="grandTotal" th:if="${errors.containsKey('grandTotal')}"
+                  th:text="${errors.get('grandTotal')}"></span></div>
+        <div class="row"><label for="vatTotal">KDV toplamı</label>
+            <input id="vatTotal" name="vatTotal" type="text" th:value="${form.vatTotal()}">
+            <span class="field-error" data-field="vatTotal" th:if="${errors.containsKey('vatTotal')}"
+                  th:text="${errors.get('vatTotal')}"></span></div>
+        <div class="row"><label for="currency">Para birimi</label>
+            <select id="currency" name="currency">
+                <option th:each="c : ${currencies}" th:value="${c}" th:text="${c}"
+                        th:selected="${c == form.currency()}"></option>
+            </select>
+            <span class="field-error" data-field="currency" th:if="${errors.containsKey('currency')}"
+                  th:text="${errors.get('currency')}"></span></div>
+        <button id="invoice-submit" type="submit">Kaydet</button>
+    </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<!-- Ortak parçalar. Seçiciler (id) rpa-service'in Playwright adımlarının sözleşmesidir; değişirse rpa-service ayarı
+     da değişir (NFR-09). -->
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <title th:text="${title} + ' · Muhasebe Portalı'">Muhasebe Portalı</title>
+    <style>
+        body { font-family: Verdana, sans-serif; font-size: 13px; margin: 0; background: #eceff3; color: #222; }
+        header { background: #234; color: #fff; padding: 8px 16px; display: flex; gap: 16px; align-items: center; }
+        header a, header button { color: #fff; background: none; border: 0; font: inherit; cursor: pointer; }
+        main { padding: 16px; max-width: 960px; }
+        table { border-collapse: collapse; width: 100%; background: #fff; }
+        th, td { border: 1px solid #bbb; padding: 4px 8px; text-align: left; }
+        th { background: #dde3ea; }
+        label { display: inline-block; width: 140px; }
+        .row { margin: 6px 0; }
+        .field-error, #login-error, #form-errors { color: #b00; }
+        #success-message { color: #070; font-weight: bold; }
+    </style>
+    <!-- Gecikmeli eleman (FR-P3, B-36): data-delayed işaretli eleman sayfaya elementDelayMs sonra görünür. -->
+    <style th:if="${elementDelayMs > 0}">[data-delayed] { display: none; }</style>
+    <script th:if="${elementDelayMs > 0}" th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', () => setTimeout(() =>
+            document.querySelectorAll('[data-delayed]').forEach(e => e.removeAttribute('data-delayed')),
+            /*[[${elementDelayMs}]]*/ 0));
+    </script>
+</head>
+<body>
+<header th:fragment="nav">
+    <strong>Muhasebe Portalı</strong>
+    <a id="nav-invoices" th:href="@{/invoices}">Faturalar</a>
+    <a id="nav-new-invoice" th:href="@{/invoices/new}">Yeni fatura</a>
+    <form id="logout-form" th:action="@{/logout}" method="post" style="margin-left:auto">
+        <button id="logout-submit" type="submit">Çıkış</button>
+    </form>
+</header>
+</body>
+</html>
