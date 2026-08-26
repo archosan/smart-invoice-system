@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Giriş')}"></head>
+<body>
+<main>
+    <h1>Muhasebe Portalı · Giriş</h1>
+    <p id="login-error" th:if="${error}">Kullanıcı adı veya şifre hatalı.</p>
+    <form id="login-form" th:action="@{/login}" method="post">
+        <div class="row"><label for="username">Kullanıcı adı</label>
+            <input id="username" name="username" type="text" autocomplete="username"></div>
+        <div class="row"><label for="password">Şifre</label>
+            <input id="password" name="password" type="password" autocomplete="current-password"></div>
+        <button id="login-submit" type="submit">Giriş</button>
+    </form>
+</main>
+</body>
+</html>
