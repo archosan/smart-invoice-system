@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Fatura')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main>
+    <p id="success-message" th:if="${created}">Fatura kaydedildi.</p>
+    <h1>Kayıt no: <span id="ref-no" th:text="${invoice.refNo()}"></span></h1>
+    <table id="invoice-detail">
+        <tr><th>Fatura no</th><td class="invoice-no" th:text="${invoice.invoiceNo()}"></td></tr>
+        <tr><th>VKN</th><td class="supplier-vkn" th:text="${invoice.supplierVkn()}"></td></tr>
+        <tr><th>Tedarikçi</th><td class="supplier-name" th:text="${invoice.supplierName()}"></td></tr>
+        <tr><th>Fatura tarihi</th><td class="invoice-date" th:text="${invoice.invoiceDate()}"></td></tr>
+        <tr><th>Vade</th><td class="due-date" th:text="${invoice.dueDate()}"></td></tr>
+        <tr><th>Genel toplam</th><td class="grand-total" th:text="${invoice.grandTotal().toPlainString()}"></td></tr>
+        <tr><th>KDV toplamı</th><td class="vat-total" th:text="${invoice.vatTotal().toPlainString()}"></td></tr>
+        <tr><th>Para birimi</th><td class="currency" th:text="${invoice.currency()}"></td></tr>
+    </table>
+</main>
+</body>
+</html>

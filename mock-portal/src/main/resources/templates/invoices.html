@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Faturalar')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main>
+    <h1>Faturalar</h1>
+    <form id="search-form" th:action="@{/invoices}" method="get">
+        <label for="search-invoice-no">Fatura no</label>
+        <input id="search-invoice-no" name="q" type="text" th:value="${result.query()}">
+        <button id="search-submit" type="submit">Ara</button>
+    </form>
+    <p id="result-count" th:text="${result.totalElements()} + ' kayıt'">0 kayıt</p>
+    <table id="invoice-table" data-delayed>
+        <thead>
+        <tr><th>Kayıt no</th><th>Fatura no</th><th>VKN</th><th>Tedarikçi</th><th>Fatura tarihi</th>
+            <th>Vade</th><th>Toplam</th><th>KDV</th><th>Para birimi</th></tr>
+        </thead>
+        <tbody>
+        <tr class="invoice-row" th:each="i : ${result.items()}" th:attr="data-ref-no=${i.refNo()}">
+            <td class="ref-no"><a th:href="@{/invoices/{ref}(ref=${i.refNo()})}" th:text="${i.refNo()}"></a></td>
+            <td class="invoice-no" th:text="${i.invoiceNo()}"></td>
+            <td class="supplier-vkn" th:text="${i.supplierVkn()}"></td>
+            <td class="supplier-name" th:text="${i.supplierName()}"></td>
+            <td class="invoice-date" th:text="${i.invoiceDate()}"></td>
+            <td class="due-date" th:text="${i.dueDate()}"></td>
+            <td class="grand-total" th:text="${i.grandTotal().toPlainString()}"></td>
+            <td class="vat-total" th:text="${i.vatTotal().toPlainString()}"></td>
+            <td class="currency" th:text="${i.currency()}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <p id="pagination">
+        <a id="prev-page" th:if="${result.hasPrevious()}"
+           th:href="@{/invoices(q=${result.query()},page=${result.page() - 1})}">&laquo; Önceki</a>
+        <span id="page-info" th:text="'Sayfa ' + ${result.page() + 1} + ' / ' + ${result.totalPages()}"></span>
+        <a id="next-page" th:if="${result.hasNext()}"
+           th:href="@{/invoices(q=${result.query()},page=${result.page() + 1})}">Sonraki &raquo;</a>
+    </p>
+</main>
+</body>
+</html>
