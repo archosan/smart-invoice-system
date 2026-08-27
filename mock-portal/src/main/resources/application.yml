@@ -1,3 +1,30 @@
 spring:
   application:
     name: mock-portal
+
+server:
+  servlet:
+    session:
+      # Oturum yalnızca cookie'de; yoksa Tomcat ilk yönlendirmede ;jsessionid=… ile URL'ye yazar (loglara, ekran
+      # görüntülerine sızar).
+      tracking-modes: cookie
+
+mock-portal:
+  # Kimlik bilgileri .env'den (B-26); boşsa portal açılmaz.
+  username: ${PORTAL_USERNAME:}
+  password: ${PORTAL_PASSWORD:}
+  page-size: 10
+  # Testler için hata bayrağı (B-24): fatura numarası bu düzenli ifadeyle eşleşen form her gönderildiğinde 500 döner.
+  # Boşsa kapalı.
+  fail-invoice-no-pattern: ${PORTAL_FAIL_INVOICE_NO_PATTERN:}
+  # Testler için (B-35): eşleşen gönderim kaydedilir, yanıt slow-response-delay kadar gecikir; boşsa kapalı.
+  slow-invoice-no-pattern: ${PORTAL_SLOW_INVOICE_NO_PATTERN:}
+  slow-response-delay: 20s
+  # Hata enjeksiyonu (FR-P3, B-36); varsayılanlar kapalıdır.
+  # Oturum bu kadar boşta kalırsa düşer.
+  session-idle-timeout: ${PORTAL_SESSION_IDLE_TIMEOUT:30m}
+  # Her sayfa isteğinin (health hariç) 500 dönme olasılığı, 0-1; tohum verilirse dizi tekrarlanabilir.
+  error-rate: ${PORTAL_ERROR_RATE:0}
+  error-seed: ${PORTAL_ERROR_SEED:}
+  # Fatura formu ve sonuç tablosu bu kadar sonra görünür.
+  element-delay: ${PORTAL_ELEMENT_DELAY:0ms}
