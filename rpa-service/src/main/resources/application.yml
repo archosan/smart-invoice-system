@@ -1,3 +1,83 @@
 spring:
   application:
     name: rpa-service
+  # Bağlantı ayarları (datasource, rabbitmq) compose ortamından gelir.
+  rabbitmq:
+    # Outbox relay bunlar olmadan başlamaz (B-05).
+    publisher-confirm-type: correlated
+    publisher-returns: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+  lifecycle:
+    # Listener kapanırken sürmekte olan portal girişini sonuna kadar bekler (en fazla timeout + submit-timeout + 15 sn,
+    # B-27); kapanış aşaması bundan uzun olmalı, yoksa DB bağlantısı giriş bitmeden kapanır. Compose'daki
+    # stop_grace_period da bundan uzun.
+    timeout-per-shutdown-phase: 2m
+
+invoice:
+  rpa:
+    # Fatura başına Redis kilidinin kirası (B-34, FR-R7). İş sürdükçe watchdog kiranın üçte birinde yeniler; süreç
+    # ölürse kilit en geç bu kadar sonra düşer.
+    lock-lease: 60s
+    # Geçici portal hatasında (hata sayfası, zaman aşımı, eleman yok) mesaj bekleme odasında 30 sn bekleyip yeniden
+    # denenir; bu kadar denemeden sonra DLQ → RPA_FAILED (B-37, FR-R5).
+    max-attempts: 4
+    # Başarısız her denemenin ekran görüntüsü (B-37, FR-R6); konteynerde screenshots volume'u.
+    screenshot-dir: /data/screenshots
+    portal:
+      url: ${PORTAL_URL:http://localhost:8090}
+      # Kimlik bilgileri .env'den (B-26); boşsa servis açılmaz.
+      username: ${PORTAL_USERNAME:}
+      password: ${PORTAL_PASSWORD:}
+      # Tek bir sayfa adımının (gezinme, eleman bekleme) ve tarayıcı açılışının üst süresi.
+      timeout: 15s
+      # Bir girişin toplam üst süresi; kapanışta beklenecek süre bundan türetilir (B-27).
+      submit-timeout: 60s
+      headless: true
+      paths:
+        login: /login
+        new-invoice: /invoices/new
+        # Ön arama (B-35, FR-R3)
+        search: /invoices
+      # Portalın seçici sözleşmesi (DECISIONS.md §4.5, NFR-09): portal değişirse yalnızca burası değişir.
+      selectors:
+        username: "#username"
+        password: "#password"
+        login-submit: "#login-submit"
+        login-error: "#login-error"
+        logged-in: "#nav-invoices"
+        invoice-form: "#invoice-form"
+        supplier-vkn: "#supplierVkn"
+        supplier-name: "#supplierName"
+        invoice-no: "#invoiceNo"
+        invoice-date: "#invoiceDate"
+        due-date: "#dueDate"
+        grand-total: "#grandTotal"
+        vat-total: "#vatTotal"
+        currency: "#currency"
+        invoice-submit: "#invoice-submit"
+        form-errors: "#form-errors"
+        field-error: ".field-error"
+        ref-no: "#ref-no"
+        portal-error: "#portal-error"
+        # Ön arama: arama formu, sonuç satırları ve sayfalama (B-35)
+        search-invoice-no: "#search-invoice-no"
+        search-submit: "#search-submit"
+        result-table: "#invoice-table"
+        result-row: "tr.invoice-row"
+        row-invoice-no: ".invoice-no"
+        row-supplier-vkn: ".supplier-vkn"
+        row-ref-no-attribute: "data-ref-no"
+        next-page: "#next-page"
+
+# Metrikler (B-48, NFR-06): Prometheus biçimi; yetki rpa-service portu host'a açılmaz, uç yalnız iç ağda. Kuyruk derinliği broker'ın kendi uçlarında
+# (rabbitmq_prometheus), alarm kuralları infra/prometheus/alerts.yml.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
