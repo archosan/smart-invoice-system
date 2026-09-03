@@ -1,0 +1,185 @@
+name: invoice-system
+
+# Ortak değişkenler ayrı anchor'da: servis kendi environment'ını eklerken
+# `<<: *app-env` ile birleştirir (bkz. rpa-service), üzerine yazmaz.
+x-app-env: &app-env
+  SPRING_RABBITMQ_HOST: rabbitmq
+  SPRING_RABBITMQ_VIRTUAL_HOST: invoice
+  SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:?}
+  SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?}
+  REDIS_HOST: redis
+  OLLAMA_BASE_URL: http://host.docker.internal:11434
+  # JSON log yalnızca konteynerde; yerelde ve testlerde düz metin (B-08, NFR-06).
+  LOGGING_STRUCTURED_FORMAT_CONSOLE: ecs
+
+# Bellek limitleri (B-31, NFR-08): yük altında ölçülen tepenin ~2 katı; JVM imajları heap için limitin %65'ini
+# kullanır (MaxRAMPercentage), kalanı heap dışı belleğe kalır. rpa-service Chromium'u da taşır. Ollama compose dışında.
+# Secret'lar konteynerlere tek tek verilir, env_file yok (NFR-10, B-26): her servis yalnızca kendi DB şifresini,
+# portal şifresini yalnızca rpa-service ve mock-portal görür. ${…} değerleri compose'un kökteki .env'inden gelir.
+x-app: &app
+  restart: unless-stopped
+  environment:
+    <<: *app-env
+  extra_hosts: ["host.docker.internal:host-gateway"]
+  depends_on:
+    postgres: { condition: service_healthy }
+    rabbitmq: { condition: service_healthy }
+    redis:    { condition: service_healthy }
+  healthcheck: &app-healthcheck
+    # İmajlarda curl yok; bash /dev/tcp ile Actuator health yanıtında "UP" aranır.
+    test:
+      - CMD
+      - bash
+      - -c
+      - >-
+        exec 3<>/dev/tcp/localhost/8080 &&
+        printf 'GET /actuator/health HTTP/1.0\r\n\r\n' >&3 &&
+        grep -q '"status":"UP"' <&3
+    interval: 10s
+    timeout: 3s
+    start_period: 30s
+    retries: 5
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    profiles: ["infra", "all"]
+    mem_limit: 512m
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?.env içinde POSTGRES_ADMIN_PASSWORD gerekli}
+      # 01-databases.sql bunları psql \getenv ile okur
+      DOCUMENT_DB_PASSWORD: ${DOCUMENT_DB_PASSWORD:?}
+      EXTRACTION_DB_PASSWORD: ${EXTRACTION_DB_PASSWORD:?}
+      COMPLIANCE_DB_PASSWORD: ${COMPLIANCE_DB_PASSWORD:?}
+      RPA_DB_PASSWORD: ${RPA_DB_PASSWORD:?}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    ports: ["5432:5432"]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U postgres"], interval: 5s, retries: 10 }
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    profiles: ["infra", "all"]
+    mem_limit: 512m
+    # init-user.sh kullanıcıyı .env'den üretip topolojiyle birleştirir; guest oluşturulmaz.
+    entrypoint: ["/opt/invoice/init-user.sh"]
+    command: ["rabbitmq-server"]
+    environment:
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:?.env içinde RABBITMQ_USERNAME gerekli}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?.env içinde RABBITMQ_PASSWORD gerekli}
+      # İsteğe bağlı yönetim arayüzü kullanıcısı (15672); şifre boşsa üretilmez.
+      RABBITMQ_ADMIN_USERNAME: ${RABBITMQ_ADMIN_USERNAME:-rabbit-admin}
+      RABBITMQ_ADMIN_PASSWORD: ${RABBITMQ_ADMIN_PASSWORD:-}
+    volumes:
+      - rabbitdata:/var/lib/rabbitmq
+      - ./infra/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./infra/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./infra/rabbitmq/init-user.sh:/opt/invoice/init-user.sh:ro
+      # B-48: kuyruk ve DLQ derinliği broker'ın kendi Prometheus uçlarından (15692, /metrics/per-object).
+      - ./infra/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+    ports: ["5672:5672", "127.0.0.1:15672:15672", "127.0.0.1:15692:15692"]
+    healthcheck: { test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"], interval: 10s, retries: 10 }
+
+  redis:
+    image: redis:7-alpine
+    profiles: ["infra", "all"]
+    mem_limit: 128m
+    ports: ["6379:6379"]
+    healthcheck: { test: ["CMD", "redis-cli", "ping"], interval: 5s, retries: 10 }
+
+  document-service:
+    <<: *app
+    build: { context: ., dockerfile: document-service/Dockerfile }
+    profiles: ["all"]
+    mem_limit: 1g
+    environment:
+      <<: *app-env
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/document_db
+      SPRING_DATASOURCE_USERNAME: document_user
+      SPRING_DATASOURCE_PASSWORD: ${DOCUMENT_DB_PASSWORD:?}
+      # API kullanıcıları (B-43): dışa API açan servislere (document, compliance, extraction) verilir; biri eksikse
+      # compose başlamaz.
+      API_EXPERT_PASSWORD: ${API_EXPERT_PASSWORD:?.env içinde API_EXPERT_PASSWORD gerekli}
+      API_APPROVER_PASSWORD: ${API_APPROVER_PASSWORD:?.env içinde API_APPROVER_PASSWORD gerekli}
+      API_ADMIN_PASSWORD: ${API_ADMIN_PASSWORD:?.env içinde API_ADMIN_PASSWORD gerekli}
+      API_EXPERT_APPROVER_PASSWORD: ${API_EXPERT_APPROVER_PASSWORD:?.env içinde API_EXPERT_APPROVER_PASSWORD gerekli}
+    ports: ["8081:8080"]
+    volumes: ["documents:/data/documents"]
+
+  extraction-service:
+    <<: *app
+    build: { context: ., dockerfile: extraction-service/Dockerfile }
+    profiles: ["all"]
+    mem_limit: 1g
+    environment:
+      <<: *app-env
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/extraction_db
+      SPRING_DATASOURCE_USERNAME: extraction_user
+      SPRING_DATASOURCE_PASSWORD: ${EXTRACTION_DB_PASSWORD:?}
+      OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:?.env içinde OLLAMA_CHAT_MODEL gerekli}
+      # Ham LLM çıktısı API'si (B-47, ADR-22): document-service ile aynı kullanıcılar.
+      API_EXPERT_PASSWORD: ${API_EXPERT_PASSWORD:?.env içinde API_EXPERT_PASSWORD gerekli}
+      API_APPROVER_PASSWORD: ${API_APPROVER_PASSWORD:?.env içinde API_APPROVER_PASSWORD gerekli}
+      API_ADMIN_PASSWORD: ${API_ADMIN_PASSWORD:?.env içinde API_ADMIN_PASSWORD gerekli}
+      API_EXPERT_APPROVER_PASSWORD: ${API_EXPERT_APPROVER_PASSWORD:?.env içinde API_EXPERT_APPROVER_PASSWORD gerekli}
+    ports: ["8083:8080"]
+    volumes: ["documents:/data/documents:ro"]
+
+  compliance-service:
+    <<: *app
+    build: { context: ., dockerfile: compliance-service/Dockerfile }
+    profiles: ["all"]
+    mem_limit: 1g
+    environment:
+      <<: *app-env
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/compliance_db
+      SPRING_DATASOURCE_USERNAME: compliance_user
+      SPRING_DATASOURCE_PASSWORD: ${COMPLIANCE_DB_PASSWORD:?}
+      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:?.env içinde OLLAMA_EMBEDDING_MODEL gerekli}
+      # Maddeden değer çıkarımı (B-46): extraction ile aynı model, aynı LLM semaforu (Redis).
+      OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:?.env içinde OLLAMA_CHAT_MODEL gerekli}
+      # Sözleşme API'si (B-45, ADR-22): document-service ile aynı kullanıcılar.
+      API_EXPERT_PASSWORD: ${API_EXPERT_PASSWORD:?.env içinde API_EXPERT_PASSWORD gerekli}
+      API_APPROVER_PASSWORD: ${API_APPROVER_PASSWORD:?.env içinde API_APPROVER_PASSWORD gerekli}
+      API_ADMIN_PASSWORD: ${API_ADMIN_PASSWORD:?.env içinde API_ADMIN_PASSWORD gerekli}
+      API_EXPERT_APPROVER_PASSWORD: ${API_EXPERT_APPROVER_PASSWORD:?.env içinde API_EXPERT_APPROVER_PASSWORD gerekli}
+    ports: ["8082:8080"]
+    volumes: ["contracts:/data/contracts"]
+
+  rpa-service:
+    <<: *app
+    build: { context: ., dockerfile: rpa-service/Dockerfile }
+    profiles: ["all"]
+    mem_limit: 1536m
+    # docker stop sürmekte olan portal girişini bitirmeye zaman tanır (Spring kapanış aşaması 2 dk, B-27).
+    stop_grace_period: 150s
+    environment:
+      <<: *app-env
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/rpa_db
+      SPRING_DATASOURCE_USERNAME: rpa_user
+      SPRING_DATASOURCE_PASSWORD: ${RPA_DB_PASSWORD:?}
+      PORTAL_URL: http://mock-portal:8080
+      PORTAL_USERNAME: ${PORTAL_USERNAME:?.env içinde PORTAL_USERNAME gerekli}
+      PORTAL_PASSWORD: ${PORTAL_PASSWORD:?.env içinde PORTAL_PASSWORD gerekli}
+    volumes: ["screenshots:/data/screenshots"]
+
+  mock-portal:
+    build: { context: ., dockerfile: mock-portal/Dockerfile }
+    profiles: ["all"]
+    mem_limit: 1g
+    restart: unless-stopped
+    environment:
+      PORTAL_USERNAME: ${PORTAL_USERNAME:?.env içinde PORTAL_USERNAME gerekli}
+      PORTAL_PASSWORD: ${PORTAL_PASSWORD:?.env içinde PORTAL_PASSWORD gerekli}
+      PORTAL_FAIL_INVOICE_NO_PATTERN: ${PORTAL_FAIL_INVOICE_NO_PATTERN:-}
+      PORTAL_SLOW_INVOICE_NO_PATTERN: ${PORTAL_SLOW_INVOICE_NO_PATTERN:-}
+      # Hata enjeksiyonu (FR-P3, B-36); boşsa kapalı
+      PORTAL_SESSION_IDLE_TIMEOUT: ${PORTAL_SESSION_IDLE_TIMEOUT:-30m}
+      PORTAL_ERROR_RATE: ${PORTAL_ERROR_RATE:-0}
+      PORTAL_ERROR_SEED: ${PORTAL_ERROR_SEED:-}
+      PORTAL_ELEMENT_DELAY: ${PORTAL_ELEMENT_DELAY:-0ms}
+    ports: ["8090:8080"]
+    healthcheck: *app-healthcheck
+
+volumes: { pgdata: {}, rabbitdata: {}, documents: {}, contracts: {}, screenshots: {} }
