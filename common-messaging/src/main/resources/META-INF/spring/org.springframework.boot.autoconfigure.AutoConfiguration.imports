@@ -1,0 +1,3 @@
+com.archosan.invoice.messaging.autoconfigure.InvoiceMessagingAutoConfiguration
+com.archosan.invoice.messaging.autoconfigure.OutboxAutoConfiguration
+com.archosan.invoice.messaging.autoconfigure.InboxAutoConfiguration
