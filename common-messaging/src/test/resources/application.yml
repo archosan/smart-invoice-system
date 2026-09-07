@@ -1,0 +1,16 @@
+spring:
+  rabbitmq:
+    publisher-confirm-type: correlated
+    publisher-returns: true
+
+invoice:
+  messaging:
+    outbox:
+      relay:
+        # Testler turu relayBatch() ile kendileri çalıştırır; döngüyü yalnızca yaşam döngüsü testi başlatır.
+        auto-startup: false
+      cleanup:
+        auto-startup: false
+    inbox:
+      cleanup:
+        auto-startup: false
