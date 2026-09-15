@@ -1,0 +1,352 @@
+{
+  "vhosts": [
+    {
+      "name": "invoice"
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "invoice.commands",
+      "vhost": "invoice",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "invoice.events",
+      "vhost": "invoice",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "invoice.dlx",
+      "vhost": "invoice",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "invoice.retry",
+      "vhost": "invoice",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "extraction.extract-invoice.q",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": 3,
+        "x-dead-letter-exchange": "invoice.dlx",
+        "x-dead-letter-routing-key": "extraction.extract-invoice.q",
+        "x-dead-letter-strategy": "at-least-once",
+        "x-overflow": "reject-publish"
+      }
+    },
+    {
+      "name": "extraction.extract-invoice.dlq",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": -1
+      }
+    },
+    {
+      "name": "compliance.check-compliance.q",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": 3,
+        "x-dead-letter-exchange": "invoice.dlx",
+        "x-dead-letter-routing-key": "compliance.check-compliance.q",
+        "x-dead-letter-strategy": "at-least-once",
+        "x-overflow": "reject-publish"
+      }
+    },
+    {
+      "name": "compliance.check-compliance.dlq",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": -1
+      }
+    },
+    {
+      "name": "compliance.ingest-contract.q",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": 3,
+        "x-dead-letter-exchange": "invoice.dlx",
+        "x-dead-letter-routing-key": "compliance.ingest-contract.q",
+        "x-dead-letter-strategy": "at-least-once",
+        "x-overflow": "reject-publish"
+      }
+    },
+    {
+      "name": "compliance.ingest-contract.dlq",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": -1
+      }
+    },
+    {
+      "name": "rpa.post-to-portal.q",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": 3,
+        "x-dead-letter-exchange": "invoice.dlx",
+        "x-dead-letter-routing-key": "rpa.post-to-portal.q",
+        "x-dead-letter-strategy": "at-least-once",
+        "x-overflow": "reject-publish",
+        "x-single-active-consumer": true
+      }
+    },
+    {
+      "name": "rpa.post-to-portal.dlq",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": -1
+      }
+    },
+    {
+      "name": "document.extraction-events.q",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": 3,
+        "x-dead-letter-exchange": "invoice.dlx",
+        "x-dead-letter-routing-key": "document.extraction-events.q",
+        "x-dead-letter-strategy": "at-least-once",
+        "x-overflow": "reject-publish"
+      }
+    },
+    {
+      "name": "document.extraction-events.dlq",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": -1
+      }
+    },
+    {
+      "name": "document.compliance-events.q",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": 3,
+        "x-dead-letter-exchange": "invoice.dlx",
+        "x-dead-letter-routing-key": "document.compliance-events.q",
+        "x-dead-letter-strategy": "at-least-once",
+        "x-overflow": "reject-publish"
+      }
+    },
+    {
+      "name": "document.compliance-events.dlq",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": -1
+      }
+    },
+    {
+      "name": "document.rpa-events.q",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": 3,
+        "x-dead-letter-exchange": "invoice.dlx",
+        "x-dead-letter-routing-key": "document.rpa-events.q",
+        "x-dead-letter-strategy": "at-least-once",
+        "x-overflow": "reject-publish"
+      }
+    },
+    {
+      "name": "document.rpa-events.dlq",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": -1
+      }
+    },
+    {
+      "name": "rpa.post-to-portal.wait-30s",
+      "vhost": "invoice",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-message-ttl": 30000,
+        "x-dead-letter-exchange": "invoice.commands",
+        "x-dead-letter-routing-key": "rpa.post",
+        "x-dead-letter-strategy": "at-least-once",
+        "x-overflow": "reject-publish"
+      }
+    }
+  ],
+  "bindings": [
+    {
+      "source": "invoice.commands",
+      "vhost": "invoice",
+      "destination": "extraction.extract-invoice.q",
+      "destination_type": "queue",
+      "routing_key": "extract.invoice",
+      "arguments": {}
+    },
+    {
+      "source": "invoice.dlx",
+      "vhost": "invoice",
+      "destination": "extraction.extract-invoice.dlq",
+      "destination_type": "queue",
+      "routing_key": "extraction.extract-invoice.q",
+      "arguments": {}
+    },
+    {
+      "source": "invoice.commands",
+      "vhost": "invoice",
+      "destination": "compliance.check-compliance.q",
+      "destination_type": "queue",
+      "routing_key": "compliance.check",
+      "arguments": {}
+    },
+    {
+      "source": "invoice.dlx",
+      "vhost": "invoice",
+      "destination": "compliance.check-compliance.dlq",
+      "destination_type": "queue",
+      "routing_key": "compliance.check-compliance.q",
+      "arguments": {}
+    },
+    {
+      "source": "invoice.commands",
+      "vhost": "invoice",
+      "destination": "compliance.ingest-contract.q",
+      "destination_type": "queue",
+      "routing_key": "contract.ingest",
+      "arguments": {}
+    },
+    {
+      "source": "invoice.dlx",
+      "vhost": "invoice",
+      "destination": "compliance.ingest-contract.dlq",
+      "destination_type": "queue",
+      "routing_key": "compliance.ingest-contract.q",
+      "arguments": {}
+    },
+    {
+      "source": "invoice.commands",
+      "vhost": "invoice",
+      "destination": "rpa.post-to-portal.q",
+      "destination_type": "queue",
+      "routing_key": "rpa.post",
+      "arguments": {}
+    },
+    {
+      "source": "invoice.dlx",
+      "vhost": "invoice",
+      "destination": "rpa.post-to-portal.dlq",
+      "destination_type": "queue",
+      "routing_key": "rpa.post-to-portal.q",
+      "arguments": {}
+    },
+    {
+      "source": "invoice.events",
+      "vhost": "invoice",
+      "destination": "document.extraction-events.q",
+      "destination_type": "queue",
+      "routing_key": "extraction.*",
+      "arguments": {}
+    },
+    {
+      "source": "invoice.dlx",
+      "vhost": "invoice",
+      "destination": "document.extraction-events.dlq",
+      "destination_type": "queue",
+      "routing_key": "document.extraction-events.q",
+      "arguments": {}
+    },
+    {
+      "source": "invoice.events",
+      "vhost": "invoice",
+      "destination": "document.compliance-events.q",
+      "destination_type": "queue",
+      "routing_key": "compliance.*",
+      "arguments": {}
+    },
+    {
+      "source": "invoice.dlx",
+      "vhost": "invoice",
+      "destination": "document.compliance-events.dlq",
+      "destination_type": "queue",
+      "routing_key": "document.compliance-events.q",
+      "arguments": {}
+    },
+    {
+      "source": "invoice.events",
+      "vhost": "invoice",
+      "destination": "document.rpa-events.q",
+      "destination_type": "queue",
+      "routing_key": "rpa.*",
+      "arguments": {}
+    },
+    {
+      "source": "invoice.dlx",
+      "vhost": "invoice",
+      "destination": "document.rpa-events.dlq",
+      "destination_type": "queue",
+      "routing_key": "document.rpa-events.q",
+      "arguments": {}
+    },
+    {
+      "source": "invoice.retry",
+      "vhost": "invoice",
+      "destination": "rpa.post-to-portal.wait-30s",
+      "destination_type": "queue",
+      "routing_key": "rpa.post.wait",
+      "arguments": {}
+    }
+  ]
+}
