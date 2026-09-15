@@ -1,0 +1,72 @@
+# promtool birim testleri (B-48): her kural doğru durumda çalar, eşiğin altında çalmaz.
+rule_files:
+  - alerts.yml
+
+evaluation_interval: 1m
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'rabbitmq_queue_messages{queue="document.rpa-events.dlq"}'
+        values: '0 1 1 1 1 1 1 1'
+      - series: 'rabbitmq_queue_messages{queue="rpa.post-to-portal.dlq"}'
+        values: '0 1 1 1 1 1 1 1'
+      - series: 'invoice_documents_stuck{application="document-service",status="RECEIVED"}'
+        values: '0 2 2 2 2 2 2 2'
+      - series: 'invoice_documents_stuck{application="document-service",status="VALIDATED"}'
+        values: '0 0 0 0 0 0 0 0'
+      - series: 'invoice_outbox_oldest_pending_age_seconds{application="extraction-service"}'
+        values: '0 400 460 520 580 640 700 760'
+      - series: 'invoice_outbox_oldest_pending_age_seconds{application="document-service"}'
+        values: '0 2 1 3 0 2 1 0'
+    alert_rule_test:
+      - eval_time: 7m
+        alertname: InvoiceEventDeadLetterQueueNotEmpty
+        exp_alerts:
+          - exp_labels: { severity: critical, queue: document.rpa-events.dlq }
+            exp_annotations: { summary: "Olay DLQ'sunda 1 mesaj: document.rpa-events.dlq" }
+      - eval_time: 7m
+        alertname: InvoiceDocumentsStuck
+        exp_alerts:
+          - exp_labels: { severity: critical, application: document-service, status: RECEIVED }
+            exp_annotations: { summary: "2 kayıt RECEIVED durumunda eşikten uzun süredir bekliyor" }
+      - eval_time: 7m
+        alertname: InvoiceOutboxStalled
+        exp_alerts:
+          - exp_labels: { severity: critical, application: extraction-service }
+            exp_annotations:
+              summary: "extraction-service: outbox'ta 5 dk'dan eski yayınlanmamış satır (relay ya da broker)"
+      - eval_time: 3m
+        alertname: InvoiceDocumentsStuck
+        exp_alerts: []
+
+  - interval: 1m
+    input_series:
+      - series: 'invoice_dead_letters_received_total{application="document-service",queue="rpa.post-to-portal.dlq",type="PostToPortal"}'
+        values: '0 0 1 1 1'
+      - series: 'invoice_messages_processed_seconds_count{application="extraction-service",queue="extraction.extract-invoice.q",type="ExtractInvoice",outcome="requeue"}'
+        values: '0+10x30'
+      - series: 'invoice_messages_processed_seconds_count{application="document-service",queue="document.rpa-events.q",type="RpaCompleted",outcome="ack"}'
+        values: '0+10x30'
+      - series: 'up{job="rpa-service",instance="rpa-service:8080"}'
+        values: '1 0 0 0 0'
+    alert_rule_test:
+      - eval_time: 4m
+        alertname: InvoiceCommandDeadLettered
+        exp_alerts:
+          - exp_labels: { severity: warning, queue: rpa.post-to-portal.dlq }
+            exp_annotations: { summary: "Son 15 dk'da rpa.post-to-portal.dlq kuyruğuna 1 mesaj düştü" }
+      - eval_time: 25m
+        alertname: InvoiceHighRetryRate
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+              application: extraction-service
+              queue: extraction.extract-invoice.q
+            exp_annotations:
+              summary: "extraction-service / extraction.extract-invoice.q: dakikada ~166.7m×60 yeniden deneme"
+      - eval_time: 4m
+        alertname: InvoiceServiceDown
+        exp_alerts:
+          - exp_labels: { severity: critical, job: rpa-service, instance: "rpa-service:8080" }
+            exp_annotations: { summary: "rpa-service:8080 (rpa-service) kazınamıyor" }

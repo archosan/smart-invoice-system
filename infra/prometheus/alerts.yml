@@ -1,0 +1,74 @@
+# Alarm kuralları (B-48, NFR-06). Eşikler başlangıçtır; DECISIONS.md §5 "Gözlemlenebilirlik". Sınama:
+#   docker run --rm -v "$PWD/infra/prometheus:/p" --entrypoint promtool prom/prometheus test rules /p/alerts.test.yml
+groups:
+  - name: invoice-messaging
+    rules:
+      # Olay DLQ'ları tüketilmez (FR-D10): içinde mesaj varsa bir olay işlenemedi, düzeltilip yeniden yayınlanmalı.
+      - alert: InvoiceEventDeadLetterQueueNotEmpty
+        expr: rabbitmq_queue_messages{queue=~"document\\..+-events\\.dlq"} > 0
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: "Olay DLQ'sunda {{ $value }} mesaj: {{ $labels.queue }}"
+
+      # Komut DLQ'ları dinlenir ve park edilir (ADR-18): yeni park kaydı yöneticiye iş demektir.
+      - alert: InvoiceCommandDeadLettered
+        expr: sum by (queue) (increase(invoice_dead_letters_received_total[15m])) > 0
+        labels: { severity: warning }
+        annotations:
+          summary: "Son 15 dk'da {{ $labels.queue }} kuyruğuna {{ $value }} mesaj düştü"
+
+      - alert: InvoiceDeadLettersWaitingForAdmin
+        expr: invoice_dead_letters_open{kind="DLQ"} > 0
+        for: 1h
+        labels: { severity: warning }
+        annotations:
+          summary: "{{ $value }} park kaydı 1 saattir yönetici kararı bekliyor (/api/v1/admin/dead-letters)"
+
+      - alert: InvoiceQueueBacklog
+        expr: rabbitmq_queue_messages_ready{queue=~".+\\.q"} > 50
+        for: 15m
+        labels: { severity: warning }
+        annotations:
+          summary: "{{ $labels.queue }} kuyruğunda 15 dk'dır {{ $value }} mesaj bekliyor"
+
+      # Dinleyicinin requeue sonucu = geçici hata ve yeniden deneme (teslim limiti 3, ADR-03).
+      - alert: InvoiceHighRetryRate
+        expr: >-
+          sum by (application, queue)
+          (rate(invoice_messages_processed_seconds_count{outcome="requeue"}[10m])) > 0.05
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "{{ $labels.application }} / {{ $labels.queue }}: dakikada ~{{ $value | humanize }}×60 yeniden deneme"
+
+      - alert: InvoiceOutboxStalled
+        expr: invoice_outbox_oldest_pending_age_seconds > 300
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: "{{ $labels.application }}: outbox'ta 5 dk'dan eski yayınlanmamış satır (relay ya da broker)"
+
+  - name: invoice-documents
+    rules:
+      # Takılı kayıt dedektörü (B-15) dakikada bir sayar; eşikler durum başına (RECEIVED 30 dk, VALIDATED 10 dk,
+      # QUEUED_FOR_RPA 30 dk). A3: otomatik yeniden yayın yok, alarm + yönetici.
+      - alert: InvoiceDocumentsStuck
+        expr: invoice_documents_stuck > 0
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: "{{ $value }} kayıt {{ $labels.status }} durumunda eşikten uzun süredir bekliyor"
+
+      - alert: InvoiceLlmPermitUnavailable
+        expr: sum by (application) (increase(invoice_llm_permit_unavailable_total[15m])) > 0
+        labels: { severity: warning }
+        annotations:
+          summary: "{{ $labels.application }}: LLM izni (sem:llm) süresinde alınamadı; Ollama yavaş ya da kilitli"
+
+      - alert: InvoiceServiceDown
+        expr: up == 0
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: "{{ $labels.instance }} ({{ $labels.job }}) kazınamıyor"

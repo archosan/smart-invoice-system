@@ -1,0 +1,30 @@
+# Prometheus kazıma yapılandırması (B-48, NFR-06). Prometheus compose'da yok (bellek bütçesi, B-31); bu dosya ve
+# alerts.yml bir Prometheus'a doğrudan verilebilir. Servis uçları ADMIN ister (ADR-22): yönetici şifresi
+# /etc/prometheus/admin-password dosyasından okunur (API_ADMIN_PASSWORD; dosya repoya girmez). rpa-service'in portu
+# host'a açılmaz, ucu yalnız iç ağdadır ve kimlik istemez.
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - alerts.yml
+
+scrape_configs:
+  # Kuyruk ve DLQ derinliği, tüketici sayısı: broker'ın kendi eklentisi (rabbitmq_prometheus), kuyruk başına.
+  - job_name: rabbitmq
+    metrics_path: /metrics/per-object
+    static_configs:
+      - targets: ["rabbitmq:15692"]
+
+  - job_name: invoice-services
+    metrics_path: /actuator/prometheus
+    basic_auth:
+      username: admin
+      password_file: /etc/prometheus/admin-password
+    static_configs:
+      - targets: ["document-service:8080", "extraction-service:8080", "compliance-service:8080"]
+
+  - job_name: rpa-service
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["rpa-service:8080"]
