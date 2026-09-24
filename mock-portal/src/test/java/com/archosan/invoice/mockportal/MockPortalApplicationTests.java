@@ -1,10 +1,8 @@
 package com.archosan.invoice.mockportal;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class MockPortalApplicationTests {
+class MockPortalApplicationTests extends PortalTest {
 
     @Test
     void contextLoads() {
