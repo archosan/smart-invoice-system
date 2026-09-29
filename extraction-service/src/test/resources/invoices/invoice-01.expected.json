@@ -1,0 +1,23 @@
+{
+  "file" : "invoice-01.pdf",
+  "scenario" : "Tek kalem, %20 KDV, sade düzen",
+  "expectedOutcome" : "POSTED",
+  "fields" : {
+    "supplierName" : "Anadolu Kırtasiye Ltd. Şti.",
+    "supplierVkn" : "4810293756",
+    "invoiceNo" : "ANK2026000001",
+    "invoiceDate" : "2026-09-01",
+    "dueDate" : "2026-10-01",
+    "lines" : [ {
+      "description" : "A4 Fotokopi Kağıdı 80 gr (koli)",
+      "quantity" : "10",
+      "unitPrice" : "425.00",
+      "vatRate" : 20
+    } ],
+    "subtotal" : "4250.00",
+    "vatTotal" : "850.00",
+    "grandTotal" : "5100.00",
+    "currency" : "TRY"
+  },
+  "note" : "Temel durum."
+}
