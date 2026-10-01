@@ -1,0 +1,28 @@
+{
+  "file" : "invoice-03.pdf",
+  "scenario" : "Binlik ayırıcılı büyük tutarlar",
+  "expectedOutcome" : "POSTED",
+  "fields" : {
+    "supplierName" : "Marmara İnşaat Taahhüt A.Ş.",
+    "supplierVkn" : "2950183746",
+    "invoiceNo" : "MRM2026001187",
+    "invoiceDate" : "2026-09-05",
+    "dueDate" : "2026-11-04",
+    "lines" : [ {
+      "description" : "Çelik konstrüksiyon montajı",
+      "quantity" : "1",
+      "unitPrice" : "985000.00",
+      "vatRate" : 20
+    }, {
+      "description" : "Beton C30 (m³)",
+      "quantity" : "120",
+      "unitPrice" : "2450.75",
+      "vatRate" : 20
+    } ],
+    "subtotal" : "1279090.00",
+    "vatTotal" : "255818.00",
+    "grandTotal" : "1534908.00",
+    "currency" : "TRY"
+  },
+  "note" : "1.234.567,89 biçimi; nokta binlik, virgül ondalık (NFR-14)."
+}

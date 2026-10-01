@@ -1,0 +1,43 @@
+{
+  "file" : "invoice-02.pdf",
+  "scenario" : "5 kalem, karışık KDV oranları (%1, %10, %20)",
+  "expectedOutcome" : "POSTED",
+  "fields" : {
+    "supplierName" : "Ege Endüstriyel Malzeme A.Ş.",
+    "supplierVkn" : "7302918465",
+    "invoiceNo" : "EGE2026000342",
+    "invoiceDate" : "2026-09-03",
+    "dueDate" : "2026-10-03",
+    "lines" : [ {
+      "description" : "Rulman 6204 ZZ",
+      "quantity" : "24",
+      "unitPrice" : "86.50",
+      "vatRate" : 20
+    }, {
+      "description" : "Hidrolik yağ 20 L",
+      "quantity" : "3",
+      "unitPrice" : "1840.00",
+      "vatRate" : 20
+    }, {
+      "description" : "Bakım el kitabı",
+      "quantity" : "2",
+      "unitPrice" : "350.00",
+      "vatRate" : 10
+    }, {
+      "description" : "Ekmek (personel yemekhanesi)",
+      "quantity" : "40",
+      "unitPrice" : "12.50",
+      "vatRate" : 1
+    }, {
+      "description" : "İş eldiveni (çift)",
+      "quantity" : "50",
+      "unitPrice" : "38.90",
+      "vatRate" : 10
+    } ],
+    "subtotal" : "10741.00",
+    "vatTotal" : "1788.70",
+    "grandTotal" : "12529.70",
+    "currency" : "TRY"
+  },
+  "note" : "Oran başına KDV satırları; LLM kalemleri ve toplam KDV'yi doğru çıkarmalı."
+}
