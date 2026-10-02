@@ -1,0 +1,28 @@
+{
+  "file" : "invoice-04.pdf",
+  "scenario" : "₺ simgesi ve TL yazısı karışık",
+  "expectedOutcome" : "POSTED",
+  "fields" : {
+    "supplierName" : "Karadeniz Gıda San. ve Tic. Ltd. Şti.",
+    "supplierVkn" : "6619027384",
+    "invoiceNo" : "KRD2026000456",
+    "invoiceDate" : "2026-09-08",
+    "dueDate" : "2026-09-22",
+    "lines" : [ {
+      "description" : "Fındık içi (kg)",
+      "quantity" : "150",
+      "unitPrice" : "410.00",
+      "vatRate" : 1
+    }, {
+      "description" : "Ambalaj kolisi",
+      "quantity" : "200",
+      "unitPrice" : "14.75",
+      "vatRate" : 20
+    } ],
+    "subtotal" : "64450.00",
+    "vatTotal" : "1205.00",
+    "grandTotal" : "65655.00",
+    "currency" : "TRY"
+  },
+  "note" : "Birim fiyatlar ₺ ile, toplamlar TL ile; para birimi TRY olmalı."
+}
