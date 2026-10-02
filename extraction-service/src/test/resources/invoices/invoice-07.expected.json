@@ -1,0 +1,258 @@
+{
+  "file" : "invoice-07.pdf",
+  "scenario" : "2 sayfa, kalemler ikinci sayfaya taşıyor",
+  "expectedOutcome" : "POSTED",
+  "fields" : {
+    "supplierName" : "İç Anadolu Medikal Ltd. Şti.",
+    "supplierVkn" : "9038174652",
+    "invoiceNo" : "ICA2026000913",
+    "invoiceDate" : "2026-09-15",
+    "dueDate" : "2026-10-15",
+    "lines" : [ {
+      "description" : "Steril gazlı bez — parti 1",
+      "quantity" : "5",
+      "unitPrice" : "12.40",
+      "vatRate" : 10
+    }, {
+      "description" : "Enjektör 5 ml — parti 2",
+      "quantity" : "10",
+      "unitPrice" : "15.55",
+      "vatRate" : 10
+    }, {
+      "description" : "Eldiven (nitril, M) — parti 3",
+      "quantity" : "15",
+      "unitPrice" : "18.70",
+      "vatRate" : 10
+    }, {
+      "description" : "Cerrahi maske — parti 4",
+      "quantity" : "20",
+      "unitPrice" : "21.85",
+      "vatRate" : 10
+    }, {
+      "description" : "Alkollü mendil — parti 5",
+      "quantity" : "25",
+      "unitPrice" : "25.00",
+      "vatRate" : 10
+    }, {
+      "description" : "Serum seti — parti 6",
+      "quantity" : "30",
+      "unitPrice" : "28.15",
+      "vatRate" : 10
+    }, {
+      "description" : "Steril gazlı bez — parti 7",
+      "quantity" : "35",
+      "unitPrice" : "31.30",
+      "vatRate" : 10
+    }, {
+      "description" : "Enjektör 5 ml — parti 8",
+      "quantity" : "5",
+      "unitPrice" : "34.45",
+      "vatRate" : 10
+    }, {
+      "description" : "Eldiven (nitril, M) — parti 9",
+      "quantity" : "10",
+      "unitPrice" : "37.60",
+      "vatRate" : 10
+    }, {
+      "description" : "Cerrahi maske — parti 10",
+      "quantity" : "15",
+      "unitPrice" : "40.75",
+      "vatRate" : 10
+    }, {
+      "description" : "Alkollü mendil — parti 11",
+      "quantity" : "20",
+      "unitPrice" : "43.90",
+      "vatRate" : 10
+    }, {
+      "description" : "Serum seti — parti 12",
+      "quantity" : "25",
+      "unitPrice" : "47.05",
+      "vatRate" : 10
+    }, {
+      "description" : "Steril gazlı bez — parti 13",
+      "quantity" : "30",
+      "unitPrice" : "50.20",
+      "vatRate" : 10
+    }, {
+      "description" : "Enjektör 5 ml — parti 14",
+      "quantity" : "35",
+      "unitPrice" : "53.35",
+      "vatRate" : 10
+    }, {
+      "description" : "Eldiven (nitril, M) — parti 15",
+      "quantity" : "5",
+      "unitPrice" : "56.50",
+      "vatRate" : 10
+    }, {
+      "description" : "Cerrahi maske — parti 16",
+      "quantity" : "10",
+      "unitPrice" : "59.65",
+      "vatRate" : 10
+    }, {
+      "description" : "Alkollü mendil — parti 17",
+      "quantity" : "15",
+      "unitPrice" : "62.80",
+      "vatRate" : 10
+    }, {
+      "description" : "Serum seti — parti 18",
+      "quantity" : "20",
+      "unitPrice" : "65.95",
+      "vatRate" : 10
+    }, {
+      "description" : "Steril gazlı bez — parti 19",
+      "quantity" : "25",
+      "unitPrice" : "69.10",
+      "vatRate" : 10
+    }, {
+      "description" : "Enjektör 5 ml — parti 20",
+      "quantity" : "30",
+      "unitPrice" : "72.25",
+      "vatRate" : 10
+    }, {
+      "description" : "Eldiven (nitril, M) — parti 21",
+      "quantity" : "35",
+      "unitPrice" : "75.40",
+      "vatRate" : 10
+    }, {
+      "description" : "Cerrahi maske — parti 22",
+      "quantity" : "5",
+      "unitPrice" : "78.55",
+      "vatRate" : 10
+    }, {
+      "description" : "Alkollü mendil — parti 23",
+      "quantity" : "10",
+      "unitPrice" : "81.70",
+      "vatRate" : 10
+    }, {
+      "description" : "Serum seti — parti 24",
+      "quantity" : "15",
+      "unitPrice" : "84.85",
+      "vatRate" : 10
+    }, {
+      "description" : "Steril gazlı bez — parti 25",
+      "quantity" : "20",
+      "unitPrice" : "88.00",
+      "vatRate" : 10
+    }, {
+      "description" : "Enjektör 5 ml — parti 26",
+      "quantity" : "25",
+      "unitPrice" : "91.15",
+      "vatRate" : 10
+    }, {
+      "description" : "Eldiven (nitril, M) — parti 27",
+      "quantity" : "30",
+      "unitPrice" : "94.30",
+      "vatRate" : 10
+    }, {
+      "description" : "Cerrahi maske — parti 28",
+      "quantity" : "35",
+      "unitPrice" : "97.45",
+      "vatRate" : 10
+    }, {
+      "description" : "Alkollü mendil — parti 29",
+      "quantity" : "5",
+      "unitPrice" : "100.60",
+      "vatRate" : 10
+    }, {
+      "description" : "Serum seti — parti 30",
+      "quantity" : "10",
+      "unitPrice" : "103.75",
+      "vatRate" : 10
+    }, {
+      "description" : "Steril gazlı bez — parti 31",
+      "quantity" : "15",
+      "unitPrice" : "106.90",
+      "vatRate" : 10
+    }, {
+      "description" : "Enjektör 5 ml — parti 32",
+      "quantity" : "20",
+      "unitPrice" : "110.05",
+      "vatRate" : 10
+    }, {
+      "description" : "Eldiven (nitril, M) — parti 33",
+      "quantity" : "25",
+      "unitPrice" : "113.20",
+      "vatRate" : 10
+    }, {
+      "description" : "Cerrahi maske — parti 34",
+      "quantity" : "30",
+      "unitPrice" : "116.35",
+      "vatRate" : 10
+    }, {
+      "description" : "Alkollü mendil — parti 35",
+      "quantity" : "35",
+      "unitPrice" : "119.50",
+      "vatRate" : 10
+    }, {
+      "description" : "Serum seti — parti 36",
+      "quantity" : "5",
+      "unitPrice" : "122.65",
+      "vatRate" : 10
+    }, {
+      "description" : "Steril gazlı bez — parti 37",
+      "quantity" : "10",
+      "unitPrice" : "125.80",
+      "vatRate" : 10
+    }, {
+      "description" : "Enjektör 5 ml — parti 38",
+      "quantity" : "15",
+      "unitPrice" : "128.95",
+      "vatRate" : 10
+    }, {
+      "description" : "Eldiven (nitril, M) — parti 39",
+      "quantity" : "20",
+      "unitPrice" : "132.10",
+      "vatRate" : 10
+    }, {
+      "description" : "Cerrahi maske — parti 40",
+      "quantity" : "25",
+      "unitPrice" : "135.25",
+      "vatRate" : 10
+    }, {
+      "description" : "Alkollü mendil — parti 41",
+      "quantity" : "30",
+      "unitPrice" : "138.40",
+      "vatRate" : 10
+    }, {
+      "description" : "Serum seti — parti 42",
+      "quantity" : "35",
+      "unitPrice" : "141.55",
+      "vatRate" : 10
+    }, {
+      "description" : "Steril gazlı bez — parti 43",
+      "quantity" : "5",
+      "unitPrice" : "144.70",
+      "vatRate" : 10
+    }, {
+      "description" : "Enjektör 5 ml — parti 44",
+      "quantity" : "10",
+      "unitPrice" : "147.85",
+      "vatRate" : 10
+    }, {
+      "description" : "Eldiven (nitril, M) — parti 45",
+      "quantity" : "15",
+      "unitPrice" : "151.00",
+      "vatRate" : 10
+    }, {
+      "description" : "Cerrahi maske — parti 46",
+      "quantity" : "20",
+      "unitPrice" : "154.15",
+      "vatRate" : 10
+    }, {
+      "description" : "Alkollü mendil — parti 47",
+      "quantity" : "25",
+      "unitPrice" : "157.30",
+      "vatRate" : 10
+    }, {
+      "description" : "Serum seti — parti 48",
+      "quantity" : "30",
+      "unitPrice" : "160.45",
+      "vatRate" : 10
+    } ],
+    "subtotal" : "83601.00",
+    "vatTotal" : "8360.16",
+    "grandTotal" : "91961.16",
+    "currency" : "TRY"
+  },
+  "note" : "Toplamlar ikinci sayfanın sonunda."
+}
