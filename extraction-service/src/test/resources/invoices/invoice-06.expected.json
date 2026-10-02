@@ -1,0 +1,28 @@
+{
+  "file" : "invoice-06.pdf",
+  "scenario" : "e-Arşiv benzeri düzen, ayıklanacak gürültü alanlar",
+  "expectedOutcome" : "POSTED",
+  "fields" : {
+    "supplierName" : "Doğu Yazılım Hizmetleri A.Ş.",
+    "supplierVkn" : "5172039486",
+    "invoiceNo" : "DGY2026004410",
+    "invoiceDate" : "2026-09-12",
+    "dueDate" : "2026-10-12",
+    "lines" : [ {
+      "description" : "Yazılım bakım hizmeti (Eylül 2026)",
+      "quantity" : "1",
+      "unitPrice" : "12500.00",
+      "vatRate" : 20
+    }, {
+      "description" : "Bulut sunucu kirası (aylık)",
+      "quantity" : "3",
+      "unitPrice" : "1750.00",
+      "vatRate" : 20
+    } ],
+    "subtotal" : "17750.00",
+    "vatTotal" : "3550.00",
+    "grandTotal" : "21300.00",
+    "currency" : "TRY"
+  },
+  "note" : "ETTN, vergi dairesi, IBAN, MERSİS no; VKN ile karıştırılmamalı."
+}
