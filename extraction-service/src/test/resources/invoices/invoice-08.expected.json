@@ -1,0 +1,28 @@
+{
+  "file" : "invoice-08.pdf",
+  "scenario" : "Farklı tarih biçimi (gg/aa/yyyy)",
+  "expectedOutcome" : "POSTED",
+  "fields" : {
+    "supplierName" : "Trakya Tarım Ürünleri Kooperatifi",
+    "supplierVkn" : "1429837560",
+    "invoiceNo" : "TRK2026000230",
+    "invoiceDate" : "2026-09-18",
+    "dueDate" : "2026-10-30",
+    "lines" : [ {
+      "description" : "Buğday tohumu (kg)",
+      "quantity" : "500",
+      "unitPrice" : "18.40",
+      "vatRate" : 1
+    }, {
+      "description" : "Gübre (50 kg çuval)",
+      "quantity" : "20",
+      "unitPrice" : "640.00",
+      "vatRate" : 1
+    } ],
+    "subtotal" : "22000.00",
+    "vatTotal" : "220.00",
+    "grandTotal" : "22220.00",
+    "currency" : "TRY"
+  },
+  "note" : "Tarihler 18/09/2026 biçiminde."
+}
