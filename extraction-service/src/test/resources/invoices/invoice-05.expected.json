@@ -1,0 +1,33 @@
+{
+  "file" : "invoice-05.pdf",
+  "scenario" : "Türkçe karakter yoğun adlar ve açıklamalar",
+  "expectedOutcome" : "POSTED",
+  "fields" : {
+    "supplierName" : "Güneydoğu Çiçekçilik — Şükrü Öztürk",
+    "supplierVkn" : "3847561920",
+    "invoiceNo" : "GND2026000078",
+    "invoiceDate" : "2026-09-10",
+    "dueDate" : "2026-10-10",
+    "lines" : [ {
+      "description" : "Işıklı süs bitkisi (saksı, büyük boy)",
+      "quantity" : "6",
+      "unitPrice" : "540.00",
+      "vatRate" : 20
+    }, {
+      "description" : "Gül buketi — ağır kokulu, İğdır üretimi",
+      "quantity" : "12",
+      "unitPrice" : "275.50",
+      "vatRate" : 20
+    }, {
+      "description" : "Çiçek gübresi (ölçü kaşığıyla)",
+      "quantity" : "4",
+      "unitPrice" : "189.90",
+      "vatRate" : 20
+    } ],
+    "subtotal" : "7305.60",
+    "vatTotal" : "1461.12",
+    "grandTotal" : "8766.72",
+    "currency" : "TRY"
+  },
+  "note" : "ŞĞÜİÖÇ ığüşöç; İ/ı normalizasyonu (NFC)."
+}
