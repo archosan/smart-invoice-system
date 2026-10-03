@@ -1,0 +1,28 @@
+{
+  "file" : "invoice-09.pdf",
+  "scenario" : "Bozuk: kalem toplamı ara toplamı tutmuyor",
+  "expectedOutcome" : "NEEDS_REVIEW",
+  "fields" : {
+    "supplierName" : "Akdeniz Ofis Mobilyaları Ltd. Şti.",
+    "supplierVkn" : "6091827345",
+    "invoiceNo" : "AKD2026000321",
+    "invoiceDate" : "2026-09-20",
+    "dueDate" : "2026-10-20",
+    "lines" : [ {
+      "description" : "Çalışma masası 160x80",
+      "quantity" : "4",
+      "unitPrice" : "3200.00",
+      "vatRate" : 20
+    }, {
+      "description" : "Ergonomik ofis koltuğu",
+      "quantity" : "2",
+      "unitPrice" : "1150.00",
+      "vatRate" : 20
+    } ],
+    "subtotal" : "15400.00",
+    "vatTotal" : "3080.00",
+    "grandTotal" : "18480.00",
+    "currency" : "TRY"
+  },
+  "note" : "Kalemler 15.100,00; basılı ara toplam 15.400,00. LINES_SUM_EQUALS_SUBTOTAL ihlali."
+}

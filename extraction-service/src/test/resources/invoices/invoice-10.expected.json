@@ -1,0 +1,23 @@
+{
+  "file" : "invoice-10.pdf",
+  "scenario" : "Taranmış gibi: yalnızca resim, metin katmanı yok",
+  "expectedOutcome" : "NO_TEXT",
+  "fields" : {
+    "supplierName" : "Batı Lojistik A.Ş.",
+    "supplierVkn" : "8256019374",
+    "invoiceNo" : "BTL2026000655",
+    "invoiceDate" : "2026-09-22",
+    "dueDate" : "2026-10-22",
+    "lines" : [ {
+      "description" : "Nakliye bedeli İzmir–İstanbul",
+      "quantity" : "1",
+      "unitPrice" : "8750.00",
+      "vatRate" : 20
+    } ],
+    "subtotal" : "8750.00",
+    "vatTotal" : "1750.00",
+    "grandTotal" : "10500.00",
+    "currency" : "TRY"
+  },
+  "note" : "OCR kapsam dışı; ExtractionFailed(NO_TEXT) beklenir."
+}
