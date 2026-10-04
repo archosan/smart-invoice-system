@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.1</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.archosan.invoice</groupId>
+    <artifactId>invoice-system</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>invoice-system</name>
+    <description>Akıllı Fatura İşleme Sistemi</description>
+
+    <modules>
+        <module>test-support</module>
+        <module>common-messaging</module>
+        <module>llm-support</module>
+        <module>document-service</module>
+        <module>extraction-service</module>
+        <module>compliance-service</module>
+        <module>rpa-service</module>
+        <module>mock-portal</module>
+        <!-- Servisler arası testler, tam yığın compose ile; -Psystem-tests ile çalışır (B-28) -->
+        <module>system-tests</module>
+    </modules>
+
+    <properties>
+        <java.version>25</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Spring Boot yönetmeyen sürümler -->
+        <pdfbox.version>3.0.8</pdfbox.version>
+        <spring-ai.version>2.0.1</spring-ai.version>
+        <redisson.version>4.7.0</redisson.version>
+        <!-- rpa-service/Dockerfile'daki mcr.microsoft.com/playwright/java imaj etiketiyle aynı olmalı -->
+        <playwright.version>1.63.0</playwright.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.archosan.invoice</groupId>
+                <artifactId>common-messaging</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.archosan.invoice</groupId>
+                <artifactId>llm-support</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson</artifactId>
+                <version>${redisson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>${pdfbox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microsoft.playwright</groupId>
+                <artifactId>playwright</artifactId>
+                <version>${playwright.version}</version>
+            </dependency>
+            <!-- rpa-service testleri portalı JVM içinde başlatır (B-25); boot jar'ı exec classifier'ındadır -->
+            <dependency>
+                <groupId>com.archosan.invoice</groupId>
+                <artifactId>mock-portal</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.archosan.invoice</groupId>
+                <artifactId>test-support</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <profiles>
+        <!-- Mockito'yu -javaagent olarak yükler; JDK 21+ dinamik agent yüklemesini kısıtlıyor.
+             Test kaynağı olan modüllerde açılır; bu modüller spring-boot-starter-test (mockito-core) almalıdır. -->
+        <profile>
+            <id>mockito-agent</id>
+            <activation>
+                <file>
+                    <exists>${project.basedir}/src/test/java</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>resolve-mockito-agent</id>
+                                <goals>
+                                    <goal>properties</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>-javaagent:${org.mockito:mockito-core:jar} -Xshare:off</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

@@ -1,0 +1,16 @@
+# Build
+target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# OS
+.DS_Store
+
+# Secrets (NFR-10)
+.env

@@ -1,0 +1,11 @@
+# Build context kök dizin; yalnızca Maven build'ine gerekenler girer.
+**/target/
+.git/
+.idea/
+.vscode/
+docs/
+infra/
+.env
+.env.*
+*.iml
+.DS_Store
