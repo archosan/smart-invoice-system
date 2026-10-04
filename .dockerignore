@@ -3,7 +3,6 @@
 .git/
 .idea/
 .vscode/
-docs/
 infra/
 .env
 .env.*
