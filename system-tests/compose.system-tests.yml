@@ -1,0 +1,22 @@
+# Sistem testleri (B-28): docker-compose.yml'ın üzerine bindirilir, ayrı proje adıyla (invoice-system-it) çalışır.
+# Sabit host portları yerine rastgele portlar (geliştirme yığınıyla çakışmasın); Ollama test JVM'indeki sahte
+# sunucuya yönlenir. Değişkenler (rastgele şifreler, FAKE_OLLAMA_PORT, portal hata deseni) testten gelir.
+services:
+  postgres:
+    ports: !override ["5432"]
+  rabbitmq:
+    ports: !override ["5672"]
+  redis:
+    ports: !reset []
+  document-service:
+    ports: !override ["8080"]
+  compliance-service:
+    ports: !override ["8080"]
+    environment:
+      OLLAMA_BASE_URL: http://host.docker.internal:${FAKE_OLLAMA_PORT:?}
+  mock-portal:
+    ports: !override ["8080"]
+  extraction-service:
+    ports: !override ["8080"]
+    environment:
+      OLLAMA_BASE_URL: http://host.docker.internal:${FAKE_OLLAMA_PORT:?}

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.archosan.invoice</groupId>
+        <artifactId>invoice-system</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>system-tests</artifactId>
+    <name>system-tests</name>
+    <description>
+        Servisler arası testler (B-28): gerçek docker-compose yığını, sahte Ollama, gerçek çökme. Yalnızca test kodu
+        içerir; varsayılan build'de derlenir ama çalışmaz, ./mvnw -Psystem-tests -pl system-tests -am verify ile çalışır.
+    </description>
+
+    <properties>
+        <!-- Varsayılan build'de atlanır: imajları derler, Docker ve birkaç dakika ister. -->
+        <skipTests>true</skipTests>
+    </properties>
+
+    <dependencies>
+        <!-- Zarf ve mesaj record'ları: komutu aynı messageId ile yeniden yayınlamak, zehirli mesaj göndermek için -->
+        <dependency>
+            <groupId>com.archosan.invoice</groupId>
+            <artifactId>common-messaging</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- B-16 seti, sahte Ollama ve PDF üreticisi (test-jar); LlmInvoice ana jardan -->
+        <dependency>
+            <groupId>com.archosan.invoice</groupId>
+            <artifactId>extraction-service</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.archosan.invoice</groupId>
+            <artifactId>extraction-service</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <!-- Sözleşme kataloğu ve üreticisi, sahte LLM'in uyum yanıtları (B-46); geçişliler extraction'dan gelir -->
+        <dependency>
+            <groupId>com.archosan.invoice</groupId>
+            <artifactId>compliance-service</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>system-tests</id>
+            <properties>
+                <skipTests>false</skipTests>
+            </properties>
+        </profile>
+    </profiles>
+</project>
